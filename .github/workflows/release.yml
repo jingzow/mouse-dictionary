@@ -4,12 +4,9 @@ permissions:
   contents: write
 
 on:
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: "Tag name to release (default: v<package.json version>)"
-        required: false
-        type: string
+  push:
+    tags:
+      - "v*-jingzow"
 
 jobs:
   package-chrome-firefox:
@@ -67,12 +64,7 @@ jobs:
       - name: Resolve tag
         id: tag
         run: |
-          VERSION=$(node -p "require('./package.json').version")
-          if [ -n "${{ inputs.tag }}" ]; then
-            TAG="${{ inputs.tag }}"
-          else
-            TAG="v${VERSION}"
-          fi
+          TAG="${GITHUB_REF_NAME}"
           echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
       - name: Download artifacts
         uses: actions/download-artifact@v4
